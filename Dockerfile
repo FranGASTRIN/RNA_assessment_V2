@@ -6,8 +6,8 @@ RUN apt update && pip3 install biopython
 # Change directory ('cd ' like)
 WORKDIR home
 
-RUN git clone https://github.com/RNA-Puzzles/RNA_assessment.git
+RUN git clone https://github.com/FranGASTRIN/RNA_assessment_V2.git
 
-WORKDIR RNA_assessment
+#WORKDIR RNA_assessment
 
-RUN python setup.py install
+#RUN python setup.py install

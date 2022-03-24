@@ -45,7 +45,7 @@ def normalize_structure(struct, out_file = None, index_file=None, extract_file =
 		sys.stderr.write("INFO:	structure extracted\n")
 
 # PVALUE set according to Hajdin et al., RNA (7) 16, 2010, either "+" or "-"
-def calc_RMSD(native_file, native_index, prediction_file, prediction_index, PVALUE = "-"):
+def calc_RMSD(native_file, native_index = None, prediction_file, prediction_index = None, PVALUE = "-"):
 	res_struct = RNA_normalizer.PDBStruct()
 	res_struct.load( native_file, native_index )
 	res_raw_seq = res_struct.raw_sequence()
@@ -67,7 +67,7 @@ def calc_RMSD(native_file, native_index, prediction_file, prediction_index, PVAL
 	sys.stderr.write("INFO Partial P-Value --> %e\n" %pvalue )
 	return(rmsd, pvalue)
 
-def InteractionNetworkFidelity(native_file, native_index, prediction_file, prediction_index):
+def InteractionNetworkFidelity(native_file, native_index = None, prediction_file, prediction_index = None):
 	res_struct = RNA_normalizer.PDBStruct()
 	res_struct.load( native_file, native_index )
 	res_raw_seq = res_struct.raw_sequence()
@@ -93,19 +93,15 @@ def InteractionNetworkFidelity(native_file, native_index, prediction_file, predi
 	
 
 if __name__ == '__main__':
+	native_pdb = sys.argv[1]
+	exp_pdb = sys.argv[2]
 	# Normalize PDB format, correct residue names and atom names. 
-	normalize_structure('example/14_solution_0.pdb','example/14_solution_normalized.pdb')
+	normalize_structure(native_pdb,native_pdb[:-4]+'_normalized.pdb')
 	
 	# calculate RMSD for RNA structures
 	# require biopython
-	print(calc_RMSD("example/14_solution_0.pdb",
-			  "example/14_solution_0.index",
-			  "example/14_ChenPostExp_2.pdb",
-			  "example/14_ChenPostExp_2.index"))
+	print(calc_RMSD(native_pdb, exp_pdb))
 
 	# calculate InteractionNetworkFidelity and Deformation Index for RNA structures
 	# need to have MA-annotate in the directory or set in mcannotate.py
-	print(InteractionNetworkFidelity("example/14_solution_0.pdb",
-			  "example/14_solution_0.index",
-			  "example/14_ChenPostExp_2.pdb",
-			  "example/14_ChenPostExp_2.index"))
+	print(InteractionNetworkFidelity(native_pdb, exp_pdb))
