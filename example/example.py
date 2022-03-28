@@ -96,12 +96,13 @@ if __name__ == '__main__':
 	native_pdb = sys.argv[1]
 	exp_pdb = sys.argv[2]
 	# Normalize PDB format, correct residue names and atom names. 
-	normalize_structure(native_pdb,native_pdb[:-4]+'_normalized.pdb')
+	#normalize_structure(native_pdb,native_pdb[:-4]+'_normalized.pdb')
 	
 	# calculate RMSD for RNA structures
 	# require biopython
-	print(calc_RMSD(native_pdb, exp_pdb))
+	#print(calc_RMSD(native_pdb, exp_pdb))
 
 	# calculate InteractionNetworkFidelity and Deformation Index for RNA structures
 	# need to have MA-annotate in the directory or set in mcannotate.py
-	print(InteractionNetworkFidelity(native_pdb, exp_pdb))
+	rmsd, DI_ALL, INF_ALL, INF_WC, INF_NWC, INF_STACK = InteractionNetworkFidelity(native_pdb, exp_pdb)
+	print(rmsd, DI_ALL)

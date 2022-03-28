@@ -1,7 +1,7 @@
 # Latest version of Python
 FROM python
 
-RUN apt update && pip3 install biopython
+RUN apt update -y && apt install vim -y && pip3 install biopython
 
 # Change directory ('cd ' like)
 WORKDIR home
