@@ -8,6 +8,6 @@ WORKDIR home
 
 RUN git clone https://github.com/FranGASTRIN/RNA_assessment_V2.git
 
-WORKDIR RNA_assessment
+WORKDIR RNA_assessment_V2
 
 RUN python setup.py install
