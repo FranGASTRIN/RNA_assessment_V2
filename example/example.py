@@ -45,7 +45,7 @@ def normalize_structure(struct, out_file = None, index_file=None, extract_file =
 		sys.stderr.write("INFO:	structure extracted\n")
 
 # PVALUE set according to Hajdin et al., RNA (7) 16, 2010, either "+" or "-"
-def calc_RMSD(native_file, native_index = None, prediction_file, prediction_index = None, PVALUE = "-"):
+def calc_RMSD(native_file, prediction_file, native_index = None, prediction_index = None, PVALUE = "-"):
 	res_struct = RNA_normalizer.PDBStruct()
 	res_struct.load( native_file, native_index )
 	res_raw_seq = res_struct.raw_sequence()
@@ -67,7 +67,7 @@ def calc_RMSD(native_file, native_index = None, prediction_file, prediction_inde
 	sys.stderr.write("INFO Partial P-Value --> %e\n" %pvalue )
 	return(rmsd, pvalue)
 
-def InteractionNetworkFidelity(native_file, native_index = None, prediction_file, prediction_index = None):
+def InteractionNetworkFidelity(native_file, prediction_file, native_index = None, prediction_index = None):
 	res_struct = RNA_normalizer.PDBStruct()
 	res_struct.load( native_file, native_index )
 	res_raw_seq = res_struct.raw_sequence()
