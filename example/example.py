@@ -20,10 +20,49 @@
 #  
 
 import sys,os
-
+import argparse
 import RNA_normalizer
 
 from operator import attrgetter
+
+__doc__="Calculation of the RMSD and the Deformation Index"
+
+def isPDBfile(path):
+	if not os.path.isfile(path):
+		if os.path.isdir(path):
+			msg = "{0} is a directory (requires file)".format(path)
+		else:
+			msg = "{0} does not exist".format(path)
+		raise argparse.ArgumentTypeError(msg)
+	elif path[-4:] != ".pdb" and path[-4:] != ".ent":
+		msg = "{0} is not a PDB file".format(path)
+		raise argparse.ArgumentTypeError(msg)
+	return path
+
+def isdir(path):
+    if not os.path.isdir(path):
+        if os.path.isfile(path):
+            msg = "{0} is a file (requires directory)".format(path)
+        else:
+            msg = "{0} does not exist".format(path)
+        raise argparse.ArgumentTypeError(msg)
+    return path
+
+def get_arguments():
+    """Retrieves the arguments of the program."""
+    parser = argparse.ArgumentParser(description=__doc__)
+
+    parser.add_argument('-n', dest='native_pdb', type=isPDBfile, required=True,
+    					help = "PDB file of the native RNA structure")
+    parser.add_argument('-d', dest='path_data', type=isdir, default=os.getcwd(),
+    					help = "Dataset repository that contains PDB files of structure that should be compared\nto the native structure")
+    parser.add_argument('-e', dest='exp_pdb', type=isPDBfile,
+    					help = "PDB file of the experimental RNA structure (incompatible with argument -d)")
+    parser.add_argument('-o', dest='out_file', type=str, default="RMSD_DI",
+    					help = "Output file name")
+    return parser.parse_args()
+
+
 
 RESIDUES_LIST = "data/residues.list"
 ATOMS_LIST = "data/atoms.list"
@@ -86,15 +125,16 @@ def InteractionNetworkFidelity(native_file, prediction_file, native_index = None
 	rmsd = comparer.rmsd( sol_struct, res_struct )
 	INF_ALL = comparer.INF( sol_struct, res_struct, type="ALL" )
 	DI_ALL = rmsd / INF_ALL
-	INF_WC = comparer.INF( sol_struct, res_struct, type="PAIR_2D" )
-	INF_NWC = comparer.INF( sol_struct, res_struct, type="PAIR_3D" )
-	INF_STACK = comparer.INF( sol_struct, res_struct, type="STACK" )
-	return (rmsd,DI_ALL, INF_ALL, INF_WC, INF_NWC,INF_STACK)
+	#INF_WC = comparer.INF( sol_struct, res_struct, type="PAIR_2D" )
+	#INF_NWC = comparer.INF( sol_struct, res_struct, type="PAIR_3D" )
+	#INF_STACK = comparer.INF( sol_struct, res_struct, type="STACK" )
+	return (rmsd,DI_ALL) # (INF_ALL, INF_WC, INF_NWC,INF_STACK)
 	
 
 if __name__ == '__main__':
-	native_pdb = sys.argv[1]
-	exp_pdb = sys.argv[2]
+	# Get arguments
+	args = get_arguments()
+
 	# Normalize PDB format, correct residue names and atom names. 
 	#normalize_structure(native_pdb,native_pdb[:-4]+'_normalized.pdb')
 	
@@ -104,5 +144,17 @@ if __name__ == '__main__':
 
 	# calculate InteractionNetworkFidelity and Deformation Index for RNA structures
 	# need to have MA-annotate in the directory or set in mcannotate.py
-	rmsd, DI_ALL, INF_ALL, INF_WC, INF_NWC, INF_STACK = InteractionNetworkFidelity(native_pdb, exp_pdb)
-	print(rmsd, DI_ALL)
+
+	if args.exp_pdb:
+		rmsd, DI_ALL = InteractionNetworkFidelity(args.native_pdb, args.exp_pdb)
+		print("RMSD: {0}\tDeformation Index: {1}".format(rmsd, DI_ALL))
+	else:
+		out = open(args.out_file, "w")
+		for file in os.listdir(args.path_data):
+			if file[-4:] == ".pdb" or file[-4:] == ".ent":
+				rmsd, DI_ALL = InteractionNetworkFidelity(args.native_pdb, args.path_data+file)
+				out.write("{0}\t\t{1}\t{2}".format(file, rmsd, DI_ALL))
+			else:
+				sys.stderr.write("ERROR: File {0} is not a PDB file !\n".format(file))
+		out.close()
+
