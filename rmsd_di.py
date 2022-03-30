@@ -55,7 +55,7 @@ def get_arguments():
     parser.add_argument('-n', dest='native_pdb', type=isPDBfile, required=True,
     					help = "PDB file of the native RNA structure")
     parser.add_argument('-d', dest='path_data', type=isdir, default=os.getcwd(),
-    					help = "Dataset repository that contains PDB files of structure that should be compared\nto the native structure")
+    					help = "Dataset repository that contains PDB files of structure that should be compared to the native structure (ex.: pathway/to_my/dataset_name/)")
     parser.add_argument('-e', dest='exp_pdb', type=isPDBfile,
     					help = "PDB file of the experimental RNA structure (incompatible with argument -d)")
     parser.add_argument('-o', dest='out_file', type=str, default="RMSD_DI",
@@ -149,11 +149,15 @@ if __name__ == '__main__':
 		rmsd, DI_ALL = InteractionNetworkFidelity(args.native_pdb, args.exp_pdb)
 		print("\nRMSD: {0}\tDeformation Index: {1}\n".format(rmsd, DI_ALL))
 	else:
+		if args.path_data[-1] == "/":
+			path = args.path_data
+		else:
+			path = args.path_data+"/"
 		out = open(args.out_file, "w")
 		for file in os.listdir(args.path_data):
 			if file[-4:] == ".pdb" or file[-4:] == ".ent":
 				try:
-					rmsd, DI_ALL = InteractionNetworkFidelity(args.native_pdb, args.path_data+"/"+file)
+					rmsd, DI_ALL = InteractionNetworkFidelity(args.native_pdb, path+file)
 					out.write("{0}      {1}    {2}\n".format(file, rmsd, DI_ALL))
 				except:
 					continue
