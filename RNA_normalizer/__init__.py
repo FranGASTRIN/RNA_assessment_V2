@@ -403,7 +403,7 @@ class PDBStruct(object):
 	
 	def _load_index2(self):
 		self._res_seq = []
-		for i in range( 0, len(self._res_list) ):
+		for i in range(0, len(self._res_list)):
 			self._res_seq.append( i )
 			self._res_index[self._res_list[i].key()][1] = (len(self._res_seq) - 1)
 		return True 
