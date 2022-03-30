@@ -147,13 +147,16 @@ if __name__ == '__main__':
 
 	if args.exp_pdb:
 		rmsd, DI_ALL = InteractionNetworkFidelity(args.native_pdb, args.exp_pdb)
-		print("RMSD: {0}\tDeformation Index: {1}".format(rmsd, DI_ALL))
+		print("RMSD: {0}\tDeformation Index: {1}\n".format(rmsd, DI_ALL))
 	else:
 		out = open(args.out_file, "w")
 		for file in os.listdir(args.path_data):
 			if file[-4:] == ".pdb" or file[-4:] == ".ent":
-				rmsd, DI_ALL = InteractionNetworkFidelity(args.native_pdb, args.path_data+file)
-				out.write("{0}\t\t{1}\t{2}".format(file, rmsd, DI_ALL))
+				try:
+					rmsd, DI_ALL = InteractionNetworkFidelity(args.native_pdb, args.path_data+"/"+file)
+					out.write("{0}      {1}    {2}\n".format(file, rmsd, DI_ALL))
+				except:
+					continue
 			else:
 				sys.stderr.write("ERROR: File {0} is not a PDB file !\n".format(file))
 		out.close()
