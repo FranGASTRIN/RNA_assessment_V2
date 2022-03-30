@@ -147,7 +147,7 @@ if __name__ == '__main__':
 
 	if args.exp_pdb:
 		rmsd, DI_ALL = InteractionNetworkFidelity(args.native_pdb, args.exp_pdb)
-		print("RMSD: {0}\tDeformation Index: {1}\n".format(rmsd, DI_ALL))
+		print("\nRMSD: {0}\tDeformation Index: {1}\n".format(rmsd, DI_ALL))
 	else:
 		out = open(args.out_file, "w")
 		for file in os.listdir(args.path_data):
