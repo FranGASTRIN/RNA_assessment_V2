@@ -25,7 +25,7 @@ import RNA_normalizer
 
 from operator import attrgetter
 
-__doc__="Calculation of the RMSD and the Deformation Index"
+__doc__="Calculation of the RMSD and the Deformation Index for RNA structures"
 
 def isPDBfile(path):
 	if not os.path.isfile(path):
